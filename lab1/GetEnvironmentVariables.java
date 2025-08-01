@@ -48,6 +48,7 @@ public class GetEnvironmentVariables {
             return;
         }
 
+
         System.out.println();
         System.out.println("Keep reading the spec to know what to do with this output");
         System.out.println("----------------------------------------------------------");
