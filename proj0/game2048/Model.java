@@ -114,6 +114,42 @@ public class Model extends Observable {
         // for the tilt to the Side SIDE. If the board changed, set the
         // changed local variable to true.
 
+        int n = board.size();
+        board.setViewingPerspective(side);
+        boolean[][] is_merge = new boolean[n][n];
+
+        for (int i = n - 2; i >= 0; i--) {
+            for (int j = 0; j < n; j ++) {
+                Tile OneTile = board.tile(j, i);
+                if (OneTile == null) {
+                    continue;
+                }
+                for (int k = i + 1; k < n; k++) {
+                    Tile NextTile = board.tile(j, k);
+
+                    if (NextTile == null && k < n - 1) {
+                        continue;
+                    }
+
+                    if (NextTile != null  && (NextTile.value() != OneTile.value() || (NextTile.value() == OneTile.value() && is_merge[k][j]))) {
+                        if (k - 1 != i) {
+                            board.move(j, k - 1, OneTile);
+                            changed = true;
+                        }
+                        break;
+                    } else {
+                        boolean moved = board.move(j, k, OneTile);
+                        changed = true;
+                        if (moved) {
+                            score += board.tile(j,k).value();
+                            is_merge[k][j] = true;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        board.setViewingPerspective(Side.NORTH);
         checkGameOver();
         if (changed) {
             setChanged();
@@ -138,6 +174,15 @@ public class Model extends Observable {
      * */
     public static boolean emptySpaceExists(Board b) {
         // TODO: Fill in this function.
+        int n = b.size();
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                Tile OneTile = b.tile(i, j);
+                if (OneTile == null) {
+                    return true;
+                }
+            }
+        }
         return false;
     }
 
@@ -147,7 +192,16 @@ public class Model extends Observable {
      * given a Tile object t, we get its value with t.value().
      */
     public static boolean maxTileExists(Board b) {
-        // TODO: Fill in this function.
+        // TODO: Fill in this function
+        int n = b.size();
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                Tile OneTile = b.tile(i, j);
+                if (OneTile != null && OneTile.value() == MAX_PIECE) {
+                    return true;
+                }
+            }
+        }
         return false;
     }
 
@@ -159,6 +213,42 @@ public class Model extends Observable {
      */
     public static boolean atLeastOneMoveExists(Board b) {
         // TODO: Fill in this function.
+        if (emptySpaceExists(b)) {
+            return true;
+        } else {
+            int n = b.size();
+            Tile OneTile, CloseTile;
+            for (int i = 0; i < n; i ++) {
+                for (int j = 0; j < n; j++) {
+                    OneTile = b.tile(i, j);
+                    if (i - 1 > 0) {
+                        CloseTile = b.tile(i - 1, j);
+                        if (OneTile.value() == CloseTile.value()) {
+                            return true;
+                        }
+                    }
+                    if (j - 1 > 0) {
+                        CloseTile = b.tile(i, j - 1);
+                        if (OneTile.value() == CloseTile.value()) {
+                            return true;
+                        }
+                    }
+                    if (i + 1 < n) {
+                        CloseTile = b.tile(i + 1, j);
+                        if (OneTile.value() == CloseTile.value()) {
+                            return true;
+                        }
+                    }
+                    if (j + 1 < n) {
+                        CloseTile = b.tile(i, j + 1);
+                        if (OneTile.value() == CloseTile.value()) {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+
         return false;
     }
 
