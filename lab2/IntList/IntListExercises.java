@@ -10,11 +10,10 @@ public class IntListExercises {
      */
     public static void addConstant(IntList lst, int c) {
         IntList head = lst;
-        while (head.rest != null) {
+        while (head != null) {
             head.first += c;
             head = head.rest;
         }
-        head.first += c;
     }
 
     /**
@@ -68,23 +67,45 @@ public class IntListExercises {
      * @param lst IntList from Lecture
      * @return True if there was an update to the list
      */
+
+    /**
+     * 使用while循环实现
+     * @param lst
+     * @return True if there was an update to the list
+     */
     public static boolean squarePrimes(IntList lst) {
+        // Base Case: we have reached the end of the list
+        boolean changed = false;
+        IntList current = lst;
+        while(current != null) {
+            boolean currElemIsPrime = Primes.isPrime(current.first);
+            if (currElemIsPrime) {
+                current.first *= current.first;
+                changed = true;
+            }
+            current = current.rest;
+        }
+
+        return changed;
+    }
+
+    /**
+     * 由提供的代码debugger后修改而成，使用递归实现循环，我觉得非常精致
+     * @param lst
+     * @return True if there was an update to the list
+     */
+    public static boolean squarePrimes1(IntList lst) {
         // Base Case: we have reached the end of the list
         if (lst == null) {
             return false;
         }
 
-        boolean changed = false;
+        boolean currElemIsPrime = Primes.isPrime(lst.first);
 
-        while(lst.rest != null) {
-            boolean currElemIsPrime = Primes.isPrime(lst.first);
-            if (currElemIsPrime) {
-                lst.first *= lst.first;
-                changed = true;
-            }
-            lst = lst.rest;
+        if (currElemIsPrime) {
+            lst.first *= lst.first;
         }
 
-        return changed;
+        return squarePrimes(lst.rest) || currElemIsPrime;
     }
 }
