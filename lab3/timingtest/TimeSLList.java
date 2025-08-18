@@ -23,6 +23,31 @@ public class TimeSLList {
 
     public static void timeGetLast() {
         // TODO: YOUR CODE HERE
+        AList<Integer> Ns = new AList<>();
+        AList<Double> times = new AList<>();
+        AList<Integer> opCounts = new AList<>();
+
+        int[] ArrayN = {1000, 2000, 4000, 8000, 16000, 32000, 64000, 128000}; //记录SLList的长度
+        int M = 10000; //操作数均为10000
+
+        for (int i = 0; i < 8; i ++) {
+            SLList<Integer> Test = new SLList<>();
+            Ns.addLast(ArrayN[i]);
+            opCounts.addLast(M);
+
+            for (int j = 0; j < Ns.get(i); j ++) {
+                Test.addLast(1);
+            }
+
+            Stopwatch sw = new Stopwatch();
+            for(int k = 0; k < 10000; k ++) {
+                int LastItem = Test.getLast();
+            }
+            double TimeInSec = sw.elapsedTime();
+            times.addLast(TimeInSec);
+        }
+
+        printTimingTable(Ns, times, opCounts);
     }
 
 }

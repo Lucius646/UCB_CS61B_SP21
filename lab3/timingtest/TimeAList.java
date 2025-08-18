@@ -23,5 +23,26 @@ public class TimeAList {
 
     public static void timeAListConstruction() {
         // TODO: YOUR CODE HERE
+        int[] sizes = {1000, 2000, 4000, 8000, 16000, 32000, 64000, 128000};
+
+        AList<Integer> Ns      = new AList<>();
+        AList<Double>  times   = new AList<>();
+        AList<Integer> opCount = new AList<>();
+
+        for (int N : sizes) {
+            AList<Integer> test = new AList<>();
+
+            Stopwatch sw = new Stopwatch();   // 计时开始
+            for (int i = 0; i < N; i++) {
+                test.addLast(1);              // 触发坏扩容
+            }
+            double totalSec = sw.elapsedTime(); // 计时结束
+
+            Ns.addLast(N);
+            times.addLast(totalSec);
+            opCount.addLast(N);
+        }
+
+        printTimingTable(Ns, times, opCount);
     }
 }
