@@ -27,11 +27,11 @@ public class LinkedListDeque<T> implements Deque<T>, Iterable<T>{
     private final Node<T> tail;
     private int size = 0;
 
-    LinkedListDeque(T item) {
+    public LinkedListDeque(T item) {
         this();
         addLast(item);
     }
-    LinkedListDeque() {
+    public LinkedListDeque() {
         head = new Node<T>();
         tail = new Node<T>();
         head.next = tail;
