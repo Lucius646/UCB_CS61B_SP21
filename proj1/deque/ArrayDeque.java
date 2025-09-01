@@ -4,21 +4,21 @@ import java.util.Iterator;
 
 // 环形数组
 public class ArrayDeque<T> implements  Iterable<T>, Deque<T> {
-    public T[] items;
-    public int size;
-    public int head = 0;
-    public static final int INIT = 8;
+    private T[] items;
+    private int size;
+    private int head = 0;
+    private static final int INIT = 8;
 
     public ArrayDeque() {
         items = (T[]) new Object[INIT];
         size = 0;
     }
 
-    public int LogicToReal (int logic) {
+    private int logicToReal(int logic) {
         return (head + logic) % items.length;
     }
 
-    public void resize(int newCap) {
+    private void resize(int newCap) {
         Object[] newItems = new Object[newCap];
         for (int i = 0; i < size; i++) {
             newItems[i] = get(i);
@@ -40,10 +40,10 @@ public class ArrayDeque<T> implements  Iterable<T>, Deque<T> {
     @Override
     public void addLast(T item) {
         if (size == items.length) {
-            resize (items.length * 2);
+            resize(items.length * 2);
         }
-        int LastIndex = LogicToReal(size);
-        items[LastIndex] = item;
+        int lastIndex = logicToReal(size);
+        items[lastIndex] = item;
         size += 1;
     }
 
@@ -53,7 +53,9 @@ public class ArrayDeque<T> implements  Iterable<T>, Deque<T> {
     }
 
     @Override
-    public int size() {return size;}
+    public int size() {
+        return size;
+    }
 
     @Override
     public void printDeque() {
@@ -83,7 +85,7 @@ public class ArrayDeque<T> implements  Iterable<T>, Deque<T> {
         if (isEmpty()) {
             return null;
         }
-        int last = LogicToReal(size - 1);
+        int last = logicToReal(size - 1);
         T item = (T) items[last];
         items[last] = null;
         size -= 1;
@@ -95,11 +97,11 @@ public class ArrayDeque<T> implements  Iterable<T>, Deque<T> {
 
     @Override
     public T get(int index) {
-        int RealIndex = LogicToReal(index);
-        return (T) items[RealIndex];
+        int realIndex = logicToReal(index);
+        return (T) items[realIndex];
     }
 
-    public  Iterator<T> iterator() {
+    public Iterator<T> iterator() {
         return new Iterator<T>() {
             private int pos = 0;
             @Override
