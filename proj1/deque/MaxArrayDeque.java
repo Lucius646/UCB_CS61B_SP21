@@ -2,7 +2,7 @@ package deque;
 
 import java.util.Comparator;
 
-//不使用继承而是使用转发
+/*不使用继承而是使用转发
 public class MaxArrayDeque<T> {
     private final ArrayDeque<T> ad;
     private final Comparator<T> defaultCmp;
@@ -59,6 +59,39 @@ public class MaxArrayDeque<T> {
         T best = ad.get(0);
         for (int i = 1; i < ad.size(); i++) {
             T cur = ad.get(i);
+            if (cmp.compare(cur, best) > 0) {
+                best = cur;
+            }
+        }
+        return best;
+    }
+}
+*/
+
+//使用继承
+public class MaxArrayDeque<T> extends ArrayDeque<T> {
+    private final Comparator<T> defaultCmp;
+
+    public MaxArrayDeque(Comparator<T> c) {
+        super();  // 调用父类构造器
+        defaultCmp = c;
+    }
+
+    public T max() {
+        return maxHelper(defaultCmp);
+    }
+
+    public T max(Comparator<T> c) {
+        return maxHelper(c);
+    }
+
+    private T maxHelper(Comparator<T> cmp) {
+        if (this.isEmpty()) {
+            return null;
+        }
+        T best = this.get(0);
+        for (int i = 1; i < this.size(); i++) {
+            T cur = this.get(i);
             if (cmp.compare(cur, best) > 0) {
                 best = cur;
             }

@@ -6,11 +6,6 @@ public class LinkedListDeque<T> implements Deque<T>, Iterable<T> {
     private final Node<T> head;
     private final Node<T> tail;
     private int size = 0;
-
-    public LinkedListDeque(T item) {
-        this();
-        addLast(item);
-    }
     
     public LinkedListDeque() {
         head = new Node<T>();
@@ -38,11 +33,6 @@ public class LinkedListDeque<T> implements Deque<T>, Iterable<T> {
         tail.prev.next = newNode;
         tail.prev = newNode;
         size += 1;
-    }
-
-    @Override
-    public boolean isEmpty() {
-        return size == 0;
     }
 
     @Override
