@@ -13,7 +13,7 @@ public class TestArrayDequeEC {
         ArrayDequeSolution<Integer> ad = new ArrayDequeSolution<>();
 
         int n = 5000;
-        String str = "Test begins:\n";
+        String str = "\n";
 
         for (int i = 0; i < n; i++) {
             int operator = StdRandom.uniform(0, 4);
