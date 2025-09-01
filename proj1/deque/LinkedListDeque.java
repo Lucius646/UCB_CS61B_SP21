@@ -84,7 +84,7 @@ public class LinkedListDeque<T> implements Deque<T>, Iterable<T> {
             return null;
         }
 
-        Node<T> cur = head;
+        Node<T> cur = head.next;  // 从第一个实际元素开始
         for (int i = 0; i < index; i++) {
             cur = cur.next;
         }
@@ -122,21 +122,23 @@ public class LinkedListDeque<T> implements Deque<T>, Iterable<T> {
         if (this == o) {
             return true;
         }
-        if (o == null || !(o instanceof LinkedListDeque)) {
+        if (o == null || !(o instanceof Deque)) {
             return false;
         }
-        LinkedListDeque<?> other = (LinkedListDeque<?>) o;
-        if (size != other.size) {
+        Deque<?> other = (Deque<?>) o;
+        if (size != other.size()) {
             return false;
         }
-        Node<T> a = head.next;
-        Node<?> b = other.head.next;
-        while (a != tail && b != other.tail) {
-            if (!a.item.equals(b.item)) {
+        Node<T> current = head.next;
+        int index = 0;
+        while (current != tail) {
+            T a = current.item;
+            Object b = other.get(index);
+            if (a == null ? b != null : !a.equals(b)) {
                 return false;
             }
-            a = a.next;
-            b = b.next;
+            current = current.next;
+            index++;
         }
         return true;
     }
