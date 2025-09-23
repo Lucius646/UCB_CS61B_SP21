@@ -2,7 +2,8 @@ package gitlet;
 
 // TODO: any imports you need here
 
-import java.util.Date; // TODO: You'll likely use this in this class
+import java.io.Serializable;
+import java.util.*;
 
 /** Represents a gitlet commit object.
  *  TODO: It's a good idea to give a description here of what else this Class
@@ -10,7 +11,7 @@ import java.util.Date; // TODO: You'll likely use this in this class
  *
  *  @author TODO
  */
-public class Commit {
+public class Commit implements Serializable {
     /**
      * TODO: add instance variables here.
      *
@@ -20,7 +21,49 @@ public class Commit {
      */
 
     /** The message of this Commit. */
-    private String message;
+    private final String message;
 
-    /* TODO: fill in the rest of this class. */
+    /** 时间戳*/
+    private final Date timeStamp;
+
+    /** 父commit的哈希值列表，merge commit时会有多个父commit*/
+    private final List<String> parents;
+
+    /** 存储本次commit跟踪的文件及其blob的映射
+     *  key为文件名
+     *  value文件为对应的blob的哈希值
+     *  */
+    private final Map<String, String> trackedFiles;
+
+    /** commit的构造函数*/
+    public Commit(String message, List<String> parents, Map<String, String> trackedFiles, Date timeStamp) {
+        this.message = message;
+        this.parents = parents;
+        this.trackedFiles = trackedFiles;
+        this.timeStamp = timeStamp;
+    }
+
+    /** commit的无参构造 */
+    public Commit() {
+        this.message = null;
+        this.parents = new ArrayList<>();
+        this.trackedFiles = new HashMap<String, String>();
+        this.timeStamp = new Date();
+    }
+
+
+    /** 提供公共方法*/
+    public String getMessage() {
+        return message;
+    }
+    public List<String> getParents() {
+        return parents;
+    }
+    public Date getTimeStamp() {
+        return timeStamp;
+    }
+    public Map<String, String> getTrackedFiles() {
+        return trackedFiles;
+    }
+
 }
