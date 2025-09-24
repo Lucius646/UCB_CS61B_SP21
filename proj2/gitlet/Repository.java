@@ -908,7 +908,7 @@ public class Repository {
 
     //更新分支最新commit，并不需要动HEAD，HEAD指向的分支目前还是最新的
     private static void updateCurBranchHead(String newCommitHash) {
-        String refPath = readContentsAsString(HEAD_FILE).replace("refs: ", "");
+        String refPath = readContentsAsString(HEAD_FILE).replace("ref: ", "");
         File branchPath = join(GITLET_DIR, refPath);
         writeContents(branchPath, newCommitHash);
     }
