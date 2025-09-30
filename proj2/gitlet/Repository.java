@@ -275,10 +275,8 @@ public class Repository {
             try {
                 Commit curCommit = readObject(objectFile, Commit.class);
                 System.out.println("==");
-                System.out.println("commit" + commitHash);
+                System.out.println("commit " + commitHash);
                 SimpleDateFormat dateFormat = new SimpleDateFormat("EEE MMM d HH:MM:ss yyyy", Locale.US);
-                TimeZone chinaTimeZone = TimeZone.getTimeZone("Asia/Shanghai");
-                dateFormat.setTimeZone(chinaTimeZone);
                 Date commitTimeStamp = curCommit.getTimeStamp();
                 String formattedDate = dateFormat.format(commitTimeStamp);
                 System.out.println("Date: " + formattedDate);
@@ -486,12 +484,13 @@ public class Repository {
             System.exit(0);
         }
         //1.找到ID对应的commit
-        File commitFile = join(OBJECTS_DIR, commitID);
-        if (!commitFile.exists()) {
-            System.out.println("No commit with that id exists");
+        String fullCommitID = findFullCommitId(commitID);
+        if (fullCommitID == null) {
+            System.out.println("No commit with that id exists.");
             return;
         }
-        Commit targetCommit = readCommit(commitID);
+        File commitFile = join(OBJECTS_DIR, fullCommitID);
+        Commit targetCommit = readCommit(fullCommitID);
 
         //2.检查文件是否在commit中被跟踪
         Map<String, String> trackedFiles = targetCommit.getTrackedFiles();
@@ -522,7 +521,7 @@ public class Repository {
         }
 
         //2.检查是否需要切换分支
-        String curBranch = readContentsAsString(HEAD_FILE).replace("refs: refs/heads/", "");
+        String curBranch = readContentsAsString(HEAD_FILE).replace("ref: refs/heads/", "");
         if (curBranch.equals(branchName)) {
             System.out.println("No need to checkout the current branch");
             return;
@@ -609,7 +608,7 @@ public class Repository {
         }
 
         //3.检查是否试图删除当前分支
-        String curBranch = readContentsAsString(HEAD_FILE).replace("refs: refs/heads/", "");
+        String curBranch = readContentsAsString(HEAD_FILE).replace("ref: refs/heads/", "");
         if (curBranch.equals(branchName)) {
             System.out.println("Cannot remove the current branch.");
             return;
@@ -628,15 +627,21 @@ public class Repository {
             System.exit(0);
         }
 
+        String fullCommitID = findFullCommitId(commitID);
+        if (fullCommitID == null) {
+            System.out.println("No commit with that id exists.");
+            return;
+        }
+
         //2.检查commitID是否存在
-        File commitFile = join(OBJECTS_DIR, commitID);
+        File commitFile = join(OBJECTS_DIR, fullCommitID);
         if (!commitFile.exists()) {
             System.out.println("No commit with that id exists.");
             return;
         }
 
         //3.加载所需commit
-        Commit targetCommit = readCommit(commitID);
+        Commit targetCommit = readCommit(fullCommitID);
         Commit headCommit = getHeadCommit();
 
         //4.检查文件
@@ -650,7 +655,7 @@ public class Repository {
                 boolean isTarget = targetTrackedFiles.containsKey(fileName);
 
                 if (!isHead && isTarget) {
-                    System.out.println("There is a untracked file in the way; delete it, or add it and commit it firs.");
+                    System.out.println("There is an untracked file in the way; delete it, or add it and commit it first.");
                     return;
                 }
             }
@@ -911,5 +916,27 @@ public class Repository {
         String refPath = readContentsAsString(HEAD_FILE).replace("ref: ", "");
         File branchPath = join(GITLET_DIR, refPath);
         writeContents(branchPath, newCommitHash);
+    }
+
+    private static String findFullCommitId(String shortId) {
+        // 如果传入的已经是完整ID，直接返回
+        if (shortId.length() == 40) {
+            return shortId;
+        }
+
+        List<String> allObjectFiles = plainFilenamesIn(OBJECTS_DIR);
+        if (allObjectFiles == null) {
+            return null;
+        }
+
+        String foundId = null;
+        for (String fileName : allObjectFiles) {
+            if (fileName.startsWith(shortId)) {
+                // 在这个项目中，我们暂时不考虑多个匹配（歧义）的情况，找到第一个即可
+                foundId = fileName;
+                return foundId;
+            }
+        }
+        return null; // 遍历完也没找到
     }
 }
