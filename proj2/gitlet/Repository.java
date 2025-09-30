@@ -34,14 +34,15 @@ public class Repository {
     public static final File HEAD_FILE = new File(GITLET_DIR, "HEAD");
 
     /** StagingArea 文件，存放暂存区对象 */
-    public static File STAGING_FILE = join(GITLET_DIR, "staging");//创建路径
+    private static File STAGING_FILE = join(GITLET_DIR, "staging");//创建路径
 
     /** Initialize a new repository in the current working directory. */
     //init命令
     public static void init() {
         //1.检查.gitlet是否创建
         if (GITLET_DIR.exists()) {
-            throw new GitletException("A Gitlet version-control system already exists in the current directory.");
+            throw new GitletException("A Gitlet version-control system " +
+                    "already exists in the current directory.");
         }
         if (!GITLET_DIR.mkdir()) {
             throw new GitletException("Failed to create .gitlet directory.");
@@ -271,19 +272,24 @@ public class Repository {
         for (String commitHash : objectHashes) {
             File objectFile = join(OBJECTS_DIR, commitHash);
 
-            //假设是commit对象
             try {
                 Commit curCommit = readObject(objectFile, Commit.class);
-                System.out.println("==");
-                System.out.println("commit " + commitHash);
-                SimpleDateFormat dateFormat = new SimpleDateFormat("EEE MMM d HH:MM:ss yyyy", Locale.US);
+
+                // --- 开始修改 ---
+                System.out.println("==="); // 修复问题2
+                System.out.println("commit " + commitHash); // 修复问题3
+
+                SimpleDateFormat dateFormat = new SimpleDateFormat("EEE MMM d HH:mm:ss yyyy Z", Locale.US);
                 Date commitTimeStamp = curCommit.getTimeStamp();
                 String formattedDate = dateFormat.format(commitTimeStamp);
                 System.out.println("Date: " + formattedDate);
+
                 System.out.println(curCommit.getMessage());
                 System.out.println();
-            } catch (IllegalArgumentException e) {
-                //不是Commit就跳过
+                // --- 结束修改 ---
+
+            } catch (Exception e) { // 最好捕获更通用的 Exception，因为反序列化可能抛出不止一种错误
+                // 不是Commit就跳过
             }
         }
     }
@@ -808,8 +814,6 @@ public class Repository {
                             + ">>>>>>>\n";
                     File conflictFile = join(CWD, fileName);
                     writeContents(conflictFile, conflictContent);
-                    // 将冲突文件暂存
-                    add(fileName); // 调用你已实现的add命令的逻辑
                 }
                 // 如果内容相同，则无需操作 (规则 3, 4)
 
@@ -821,7 +825,6 @@ public class Repository {
                 } else {
                     // **规则1 & 7**: 在given中被修改或新增 -> checkout并add
                     checkoutFileFromCommit(givenHeadId, fileName); // 从目标提交检出文件
-                    add(fileName); // 暂存这个检出的文件
                 }
             }
             // 情况C: 仅在当前分支中修改 (!modifiedInGiven && modifiedInCurrent)
@@ -921,7 +924,12 @@ public class Repository {
     private static String findFullCommitId(String shortId) {
         // 如果传入的已经是完整ID，直接返回
         if (shortId.length() == 40) {
-            return shortId;
+            File commitFile = join(OBJECTS_DIR, shortId);
+            if (commitFile.exists()) {
+                return shortId; // 存在，是有效的，返回它
+            } else {
+                return null; // 不存在，是无效的，返回 null
+            }
         }
 
         List<String> allObjectFiles = plainFilenamesIn(OBJECTS_DIR);
