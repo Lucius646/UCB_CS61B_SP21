@@ -8,10 +8,10 @@ import static gitlet.Utils.*;
 
 
 /** Represents a gitlet repository.
- *  TODO: It's a good idea to give a description here of what else this Class
+ *
  *  does at a high level.
  *
- *  @author TODO
+ *  @author Lucius
  */
 public class Repository {
     /** The current working directory. */
@@ -240,7 +240,7 @@ public class Repository {
             Date commitTimeStamp = curCommit.getTimeStamp();
             String formattedDate = dateFormat.format(commitTimeStamp);
             System.out.println("Date: " + formattedDate);
-            
+
             System.out.println(curCommit.getMessage());
             System.out.println();
 
