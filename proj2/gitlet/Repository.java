@@ -55,7 +55,7 @@ public class Repository {
         HEADS_DIR.mkdir();
 
         //3.创建 initial commit
-        Commit initCommit = new Commit("initial Commit", new ArrayList<>(), new HashMap<>(), new Date(0));
+        Commit initCommit = new Commit("initial commit", new ArrayList<>(), new HashMap<>(), new Date());
 
         //4.将initCommit序列化并保存
         saveCommit(initCommit);
