@@ -235,12 +235,12 @@ public class Repository {
             //打印消息
             System.out.println("===");
             System.out.println("commit " + curCommitHash);
-            SimpleDateFormat dateFormat = new SimpleDateFormat("EEE MMM d HH:MM:ss yyyy", Locale.US);
-            TimeZone chinaTimeZone = TimeZone.getTimeZone("Asia/Shanghai");
-            dateFormat.setTimeZone(chinaTimeZone);
+            SimpleDateFormat dateFormat = new SimpleDateFormat("EEE MMM d HH:mm:ss yyyy Z", Locale.US);
+
             Date commitTimeStamp = curCommit.getTimeStamp();
             String formattedDate = dateFormat.format(commitTimeStamp);
             System.out.println("Date: " + formattedDate);
+            
             System.out.println(curCommit.getMessage());
             System.out.println();
 
