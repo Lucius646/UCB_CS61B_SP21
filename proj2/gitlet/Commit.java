@@ -18,13 +18,13 @@ public class Commit implements Serializable {
      */
 
     /** The message of this Commit. */
-    private final String message;
+    final String message;
 
     /** 时间戳*/
-    private final Date timeStamp;
+    final Date timeStamp;
 
     /** 父commit的哈希值列表，merge commit时会有多个父commit*/
-    private final List<String> parents;
+    final List<String> parents;
 
     /** 存储本次commit跟踪的文件及其blob的映射
      *  key为文件名

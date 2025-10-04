@@ -814,6 +814,8 @@ public class Repository {
                             + ">>>>>>>\n";
                     File conflictFile = join(CWD, fileName);
                     writeContents(conflictFile, conflictContent);
+                    String conflictFileHash = sha1(readContents(conflictFile));
+                    stagingArea.add(fileName, conflictFileHash);
                 }
                 // 如果内容相同，则无需操作 (规则 3, 4)
 
@@ -825,6 +827,10 @@ public class Repository {
                 } else {
                     // **规则1 & 7**: 在given中被修改或新增 -> checkout并add
                     checkoutFileFromCommit(givenHeadId, fileName); // 从目标提交检出文件
+                    stagingArea.add(fileName, givenHash);
+                }
+                if (currentHash == null) {
+                    rm(fileName); // 调用 rm 来处理工作区文件的删除和暂存区的更新
                 }
             }
             // 情况C: 仅在当前分支中修改 (!modifiedInGiven && modifiedInCurrent)
